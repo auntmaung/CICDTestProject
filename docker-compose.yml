@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   backend:
     build:
@@ -8,6 +9,7 @@ services:
       - POSTGRES_DB=mydb
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
+      # your backend likely connects to host "db" on port 5432
     depends_on:
       - db
 
@@ -16,17 +18,38 @@ services:
       context: .
       dockerfile: Dockerfile.frontend
 
+  # PRIMARY DATABASE (same as your old "db" service, just extended)
   db:
     image: postgres:14
+    container_name: db-primary
     environment:
       POSTGRES_DB: mydb
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     volumes:
       - pgdata:/var/lib/postgresql/data
+      # tablespaces for fragmented gigger_logs partitions
+      - /opt/ts_logs_2023:/var/lib/postgresql/ts_logs_2023
+      - /opt/ts_logs_2024:/var/lib/postgresql/ts_logs_2024
+      # export location for CSV files (Option 3 / Athena)
+      - /opt/datalake:/opt/datalake
     ports:
-      - "5432:5432"  # ✅ Exposes DB port to host machine
+      - "5432:5432"  # primary exposed to host
 
+  # REPLICA DATABASE (new container, used only for replication screenshots)
+  db-replica:
+    image: postgres:14
+    container_name: db-replica
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pgdata_replica:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"  # host:5433 -> replica:5432 (no conflict with primary)
+    depends_on:
+      - db
 
   nginx:
     image: nginx:latest
@@ -40,3 +63,4 @@ services:
 
 volumes:
   pgdata:
+  pgdata_replica:
