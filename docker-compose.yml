@@ -37,19 +37,22 @@ services:
       - "5432:5432"  # primary exposed to host
 
   # REPLICA DATABASE (new container, used only for replication screenshots)
-  db-replica:
-    image: postgres:14
-    container_name: db-replica
-    environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-    volumes:
-      - pgdata_replica:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"  # host:5433 -> replica:5432 (no conflict with primary)
-    depends_on:
-      - db
+    db-replica:
+      image: postgres:14
+      container_name: db-replica
+      environment:
+        POSTGRES_DB: mydb
+        POSTGRES_USER: user        # not used much, but required by image
+        POSTGRES_PASSWORD: password
+        PGDATA: /var/lib/postgresql/data
+      volumes:
+        - pgdata_replica:/var/lib/postgresql/data
+        - ./db-init/init-replica.sh:/init-replica.sh:ro
+      depends_on:
+        - db
+      ports:
+        - "5433:5432"
+      entrypoint: ["/bin/bash", "/init-replica.sh"]
 
   nginx:
     image: nginx:latest
