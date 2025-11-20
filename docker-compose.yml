@@ -50,9 +50,9 @@ services:
       PGDATA: /var/lib/postgresql/data
     volumes:
       - pgdata_replica:/var/lib/postgresql/data
-      - /opt/ts_logs_2023_replica:/opt/ts_logs_2023
-      - /opt/ts_logs_2024_replica:/opt/ts_logs_2024
-      - /opt/ts_logs_2025_replica:/opt/ts_logs_2025
+      - /var/lib/postgresql/tablespaces_replica/ts_logs_2023:/opt/ts_logs_2023
+      - /var/lib/postgresql/tablespaces_replica/ts_logs_2024:/opt/ts_logs_2024
+      - /var/lib/postgresql/tablespaces_replica/ts_logs_2025:/opt/ts_logs_2025
       - ./db-init/init-replica.sh:/init-replica.sh:ro
     depends_on:
       - db
