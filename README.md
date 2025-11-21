@@ -11,7 +11,7 @@ Thank you for your interest in contributing! Please follow these steps to ensure
    First, clone the repository to your local machine:
 
    ```bash
-   git clone https://github.com/auntmaung/Capstone-Project.git
+   git clone https://github.com/auntmaung/CSCI-7781-Project.git
    cd Capstone-Project
    ```
 
