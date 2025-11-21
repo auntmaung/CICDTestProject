@@ -1,4 +1,4 @@
-# Contributing to Capstone Project
+# Contributing to  Project
 
 Thank you for your interest in contributing! Please follow these steps to ensure a smooth and consistent development workflow.
 
